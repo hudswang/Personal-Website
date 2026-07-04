@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hudson Wang</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Karla:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#161D31;
+    --glow:rgba(227,164,95,.07);
+    --ink:#EDE6D8;
+    --muted:#8E96AE;
+    --lamp:#E3A45F;
+    --rule:rgba(142,150,174,.25);
+    --water:#4A6FB5;
+    --water-deep:#25407E;
+    --water-light:#A8C3E8;
+    --foam:#F2EEE3;
+    --wave-ink:#131F42;
+    --echo1:rgba(74,111,181,.5);
+    --echo2:rgba(37,64,126,.4);
+  }
+  body.day{
+    --bg:#E9E4D9;
+    --glow:rgba(74,111,181,.10);
+    --ink:#2B2B34;
+    --muted:#767B90;
+    --lamp:#B96F2C;
+    --rule:rgba(43,43,52,.2);
+    --water-light:#9FBBEA;
+    --foam:#FDFBF5;
+    --echo1:rgba(74,111,181,.45);
+    --echo2:rgba(37,64,126,.3);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100dvh}
+  body{
+    font-family:'Karla',sans-serif;
+    font-size:15px;
+    background:
+      radial-gradient(800px 500px at 85% -15%, var(--glow), transparent 60%),
+      var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+    -webkit-font-smoothing:antialiased;
+    transition:background .5s, color .5s;
+  }
+
+  a{
+    color:var(--ink);
+    text-decoration:underline;
+    text-decoration-color:var(--rule);
+    text-underline-offset:3px;
+    transition:color .2s, text-decoration-color .2s;
+  }
+  a:hover, a:focus-visible{color:var(--lamp);text-decoration-color:var(--lamp)}
+
+  /* ================= intro: the still water ================= */
+  .veil{
+    position:fixed;inset:0;z-index:10;
+    background:transparent;border:0;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .veil:focus-visible{outline:1px dashed var(--rule);outline-offset:-12px}
+  .veil .hint{
+    position:absolute;left:50%;bottom:14%;transform:translateX(-50%);
+    font-size:.85rem;font-style:italic;color:var(--muted);
+    opacity:0;transition:opacity 1.4s ease;pointer-events:none;letter-spacing:.02em;
+  }
+  .veil.hinting .hint{opacity:.6}
+  .veil.gone{display:none}
+  .cursor-hint{
+    position:fixed;z-index:11;pointer-events:none;
+    font-size:.8rem;font-style:italic;letter-spacing:.03em;
+    color:var(--muted);
+    opacity:0;transition:opacity .4s ease;
+    white-space:nowrap;
+  }
+  .cursor-hint.on{opacity:.75}
+
+  /* ================= the site: revealed top to bottom ================= */
+  .wrap{
+    height:100dvh;max-width:860px;margin:0 auto;
+    padding:clamp(24px,4.5vh,48px) clamp(20px,4vw,40px);
+    display:flex;flex-direction:column;
+    position:relative;z-index:1;
+    clip-path:inset(0 0 100% 0);
+    visibility:hidden;
+  }
+  .wrap.open{
+    visibility:visible;
+    clip-path:inset(0 0 0 0);
+    transition:clip-path 1.95s cubic-bezier(.22,.72,.24,1) .08s;
+  }
+  .wrap.open.settled{clip-path:none}
+
+  hr{border:0;border-top:1px solid var(--rule);margin:clamp(12px,2vh,20px) 0}
+
+  .topbar{display:flex;align-items:baseline;gap:20px}
+  nav{display:flex;gap:20px;font-size:.9rem;flex:1}
+  nav a{color:var(--muted)}
+  nav a:hover, nav a:focus-visible{color:var(--lamp)}
+  .lamp-toggle{
+    background:none;border:0;cursor:pointer;
+    font-family:inherit;font-size:.9rem;color:var(--muted);
+    text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;
+    transition:color .2s;
+  }
+  .lamp-toggle:hover, .lamp-toggle:focus-visible{color:var(--lamp)}
+
+  .echo{position:relative;display:inline-block}
+  .echo::before, .echo::after{
+    content:attr(data-text);
+    position:absolute;inset:0;z-index:-1;pointer-events:none;
+    transition:transform .4s cubic-bezier(.3,.7,.3,1.2), opacity .4s;
+  }
+  .echo::before{color:var(--echo1);transform:translate(3px,3px)}
+  .echo::after {color:var(--echo2);transform:translate(6px,6px)}
+  .name-block:hover .echo::before, .name-block:focus-visible .echo::before{transform:translate(6px,5px)}
+  .name-block:hover .echo::after,  .name-block:focus-visible .echo::after {transform:translate(12px,10px)}
+  h2 .echo::before, h2 .echo::after{opacity:0;transform:translate(0,0)}
+  section:hover h2 .echo::before, section:focus-within h2 .echo::before{opacity:1;transform:translate(2px,2px)}
+  section:hover h2 .echo::after,  section:focus-within h2 .echo::after {opacity:1;transform:translate(4px,4px)}
+
+  header{margin-top:clamp(8px,1.5vh,16px);display:flex;gap:24px;align-items:flex-start}
+  .head-text{flex:1;min-width:0}
+  .name-block{cursor:pointer;width:max-content;max-width:100%;outline:none;-webkit-tap-highlight-color:transparent}
+  .name-block:focus-visible h1{text-decoration:underline;text-decoration-color:var(--lamp);text-underline-offset:6px}
+  h1{
+    font-family:'Young Serif',serif;font-weight:400;
+    font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1.05;
+  }
+  h1 .dip{color:var(--lamp)}
+  .puddle{position:relative;height:clamp(1.5rem,2.6vw,2rem);overflow:hidden}
+  .reflection{
+    font-family:'Young Serif',serif;
+    font-size:clamp(1.9rem,3.4vw,2.6rem);line-height:1.05;
+    color:var(--water);
+    transform:scaleY(-1) skewX(-3deg);transform-origin:top;
+    filter:blur(2px);opacity:.42;user-select:none;
+    -webkit-mask-image:linear-gradient(to top, transparent 20%, rgba(0,0,0,.9) 95%);
+            mask-image:linear-gradient(to top, transparent 20%, rgba(0,0,0,.9) 95%);
+    transition:filter .5s, opacity .5s, transform .5s;
+  }
+  .reflection .dip{color:var(--lamp);opacity:.8}
+  .puddle.stirred .reflection{filter:blur(4.5px);opacity:.25;transform:scaleY(-1) skewX(-6deg) translateY(2px)}
+
+  .boat{
+    flex:0 0 auto;width:clamp(72px,8vw,104px);
+    cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+  }
+  .boat svg{width:100%;height:auto;overflow:visible}
+  .boat .hull{transition:transform .4s ease;transform-origin:50% 80%}
+  .boat:hover .hull, .boat:focus-visible .hull{animation:bob 1.6s ease-in-out infinite}
+  @keyframes bob{
+    0%,100%{transform:rotate(-2.5deg) translateY(0)}
+    50%{transform:rotate(2.5deg) translateY(2px)}
+  }
+  .boat:focus-visible{outline:1px dashed var(--rule);outline-offset:4px;border-radius:8px}
+
+  .tagline{margin-top:10px;max-width:52ch;line-height:1.55}
+  .tagline em{color:var(--muted)}
+  .fortune{
+    min-height:1.3em;margin-top:6px;
+    font-size:.85rem;font-style:italic;color:var(--lamp);
+    opacity:0;transform:translateY(3px);
+    transition:opacity .35s, transform .35s;
+  }
+  .fortune.show{opacity:1;transform:none}
+
+  main{
+    flex:1;display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(10px,2vh,18px) clamp(32px,5vw,64px);
+    align-content:start;min-height:0;
+  }
+  section{min-width:0}
+  h2{
+    font-size:.78rem;font-weight:700;letter-spacing:.13em;
+    text-transform:uppercase;color:var(--muted);margin-bottom:.5em;
+  }
+  p, li{line-height:1.55;font-size:.92rem}
+  ul{list-style:none}
+  li{display:flex;justify-content:space-between;gap:14px;padding:.14em 0}
+  li .when{color:var(--muted);white-space:nowrap;font-size:.86em}
+  .hush{
+    display:block;color:var(--muted);font-style:italic;font-size:.86rem;
+    max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .35s, opacity .35s, margin .35s;
+  }
+  section:hover .hush, section:focus-within .hush{max-height:3em;opacity:1;margin-top:.45em}
+
+  footer{font-size:.9rem;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap}
+  footer ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px 24px;flex:1}
+  footer a{color:var(--muted)}
+  footer a:hover, footer a:focus-visible{color:var(--lamp)}
+  .colophon{color:var(--muted);font-size:.8rem;font-style:italic}
+
+  /* ================= water FX ================= */
+  .rain-layer{position:fixed;inset:0;pointer-events:none;z-index:20}
+  .ring{
+    position:absolute;border:1px solid var(--water);border-radius:50%;
+    opacity:0;transform:translate(-50%,-50%) scale(.1);
+  }
+  .ring.warm{border-color:var(--lamp)}
+  .ring.go{animation:ripple 1.6s ease-out forwards}
+  @keyframes ripple{
+    0%{opacity:.4;transform:translate(-50%,-50%) scale(.1)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+  }
+  .ring.foam-ring{border-width:3px;border-style:dotted;border-color:var(--foam)}
+  .ring.foam-ring.go{animation:ripple-big 1.4s cubic-bezier(.2,.7,.3,1) forwards}
+  @keyframes ripple-big{
+    0%{opacity:.85;transform:translate(-50%,-50%) scale(.04)}
+    100%{opacity:0;transform:translate(-50%,-50%) scale(1)}
+  }
+  .drop{
+    position:absolute;width:5px;height:8px;
+    background:var(--water-light);
+    border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+    opacity:.95;transform:translate(-50%,-50%);
+  }
+  .drop.foamy{background:var(--foam)}
+  .drop.go{animation:fling 1.1s cubic-bezier(.2,.6,.4,1) forwards}
+  @keyframes fling{
+    0%{opacity:.95;transform:translate(-50%,-50%) translate(0,0) scale(1)}
+    100%{opacity:0;transform:translate(-50%,-50%) translate(var(--dx),var(--dy)) scale(.35)}
+  }
+
+  /* ---- the wash: a POV wave-front sweeping down the screen ---- */
+  .pov-impact{
+    position:fixed;
+    left:0;
+    top:-4vh;
+    width:100vw;
+    height:34vh;
+    pointer-events:none;
+    z-index:22;
+    transform-origin:50% 0;
+    animation:impact-bloom .95s cubic-bezier(.18,.78,.26,1) forwards;
+  }
+  .pov-impact svg{display:block;width:100%;height:100%}
+  @keyframes impact-bloom{
+    0%{opacity:0;transform:scale(.82) translateY(-12px)}
+    14%{opacity:1;transform:scale(1.04) translateY(0)}
+    100%{opacity:0;transform:scale(1.18) translateY(14px)}
+  }
+  .wash{
+    position:fixed;
+    left:-8vw;
+    top:0;
+    width:116vw;
+    height:160vh;
+    pointer-events:none;
+    z-index:21;
+    animation:washdown 2.18s cubic-bezier(.2,.72,.24,1) forwards;
+  }
+  .wash svg{display:block;width:100%;height:100%}
+  @keyframes washdown{
+    from{transform:translateY(-300px)}
+    to  {transform:translateY(104vh)}
+  }
+
+  @media (max-width:680px){
+    body{overflow:auto}
+    .wrap{height:auto;min-height:100dvh}
+    main{grid-template-columns:1fr}
+    .boat{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;animation:none !important}
+    .ring,.drop,.wash,.pov-impact,.cursor-hint{display:none}
+    .wrap{clip-path:none !important;visibility:visible !important}
+    .veil{display:none !important}
+  }
+</style>
+</head>
+<body>
+<div class="rain-layer" id="rain" aria-hidden="true"></div>
+
+<button class="veil" id="veil" aria-label="A still, dark surface. Click anywhere to step in and open the site.">
+  <span class="hint">go on — step in</span>
+</button>
+<span class="cursor-hint" id="cursorHint" aria-hidden="true">step in ·</span>
+
+<div class="wrap" id="site" aria-hidden="true">
+
+  <div class="topbar">
+    <nav aria-label="Sections">
+      <a href="#about">about</a>
+      <a href="#projects">projects</a>
+      <a href="#experience">experience</a>
+      <a href="#outside">off hours</a>
+    </nav>
+    <button class="lamp-toggle" id="lampToggle" aria-pressed="false">lamp: on</button>
+  </div>
+
+  <hr>
+
+  <header>
+    <div class="head-text">
+      <div class="name-block" id="nameBlock" tabindex="0" role="button" aria-label="Tap to stir the puddle" title="step in it">
+        <h1><span class="echo" data-text="Hudson Wang.">Hudson Wang<span class="dip">.</span></span></h1>
+        <div class="puddle" id="puddle">
+          <div class="reflection" aria-hidden="true">Hudson Wang<span class="dip">.</span></div>
+        </div>
+      </div>
+      <p class="tagline">Product engineer building small, careful things for the web — <em>usually by wandering into them.</em></p>
+      <p class="fortune" id="fortune" aria-live="polite"></p>
+    </div>
+
+    <div class="boat" id="boat" tabindex="0" role="button" aria-label="A little paper boat. Tap it." title="she's seaworthy, mostly">
+      <svg viewBox="0 0 110 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g class="hull" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M14,52 L96,52 L78,68 L32,68 Z" fill="var(--foam)" fill-opacity=".9"/>
+          <path d="M55,18 L34,52 L76,52 Z" fill="var(--foam)" fill-opacity=".9"/>
+          <path d="M55,18 L55,52"/>
+          <path d="M55,18 L34,52" stroke-width="1.6" opacity=".5"/>
+          <circle cx="55" cy="14" r="2.4" fill="var(--lamp)" stroke="none"/>
+        </g>
+        <g stroke="var(--water)" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8">
+          <path d="M8,74 q8,-6 16,0 q8,6 16,0"/>
+          <path d="M62,76 q8,-6 16,0 q8,6 16,0"/>
+        </g>
+      </svg>
+    </div>
+  </header>
+
+  <hr>
+
+  <main>
+    <section id="about" tabindex="0">
+      <h2><span class="echo" data-text="About">About</span></h2>
+      <p>Based in Vancouver. Five years turning fuzzy ideas into shipped software, front to back. Happiest at the seam between design and engineering.</p>
+      <span class="hush">Currently: senior engineer at a small climate-tech studio.</span>
+    </section>
+
+    <section id="projects" tabindex="0">
+      <h2><span class="echo" data-text="Projects">Projects</span></h2>
+      <ul>
+        <li><a href="#">Waymark</a><span class="when">trail-mapping app, 40k users</span></li>
+        <li><a href="#">Sift</a><span class="when">open-source RSS reader</span></li>
+        <li><a href="#">Tidepool</a><span class="when">generative data murals</span></li>
+      </ul>
+      <span class="hush">Most started as a puddle I didn't mean to step in.</span>
+    </section>
+
+    <section id="experience" tabindex="0">
+      <h2><span class="echo" data-text="Experience">Experience</span></h2>
+      <ul>
+        <li><span>Senior Engineer · Meridian Labs</span><span class="when">2023 –</span></li>
+        <li><span>Engineer · Fieldnote</span><span class="when">2021 – 23</span></li>
+        <li><span>Frontend Dev · Hatch Studio</span><span class="when">2019 – 21</span></li>
+      </ul>
+      <span class="hush">Full history in the resume, below.</span>
+    </section>
+
+    <section id="outside" tabindex="0">
+      <h2><span class="echo" data-text="Off hours">Off hours</span></h2>
+      <p>Film photography, long trail runs, and bread that mostly rises. Fond of rain, clearly.</p>
+      <span class="hush">Ask about the sourdough incident of 2024.</span>
+    </section>
+  </main>
+
+  <hr>
+
+  <footer>
+    <ul>
+      <li><a href="mailto:hello@jordanlee.dev">hello@jordanlee.dev</a></li>
+      <li><a href="https://linkedin.com/in/jordanlee" target="_blank" rel="noopener">linkedin</a></li>
+      <li><a href="https://github.com/jordanlee" target="_blank" rel="noopener">@jordanlee</a></li>
+      <li><a href="/resume.pdf" target="_blank">resume</a></li>
+    </ul>
+    <span class="colophon">built between rain showers ♡</span>
+  </footer>
+</div>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rain = document.getElementById('rain');
+
+  /* -------- small ripples -------- */
+  function splash(x, y, size, warm){
+    if(reduceMotion) return;
+    [size || 100, (size || 100) * 0.55].forEach((s, idx)=>{
+      setTimeout(()=>{
+        const r = document.createElement('span');
+        r.className = 'ring go' + (warm ? ' warm' : '');
+        r.style.left = x + 'px';
+        r.style.top = y + 'px';
+        r.style.width = r.style.height = s + 'px';
+        rain.appendChild(r);
+        setTimeout(()=>r.remove(), 1700);
+      }, idx * 180);
+    });
+  }
+
+  /* ==================================================================
+     THE WASH — you look down, your foot lands, and the water sheet
+     clears top-to-bottom. The crest is the reveal edge; everything
+     below it is a flat woodblock body of layered blues and foam hooks.
+     ================================================================== */
+  function crestY(x){
+    return 226
+      + 44 * Math.sin(x / 146 + 0.7)
+      + 24 * Math.sin(x / 58 + 2.4)
+      + 11 * Math.sin(x / 25 + 0.9);
+  }
+  function crestSlope(x){
+    return 44/146 * Math.cos(x / 146 + 0.7)
+         + 24/58  * Math.cos(x / 58 + 2.4)
+         + 11/25  * Math.cos(x / 25 + 0.9);
+  }
+  function crestPath(points){
+    return 'M' + points.map(p => p[0].toFixed(0) + ',' + p[1].toFixed(1)).join(' L');
+  }
+  function filledBand(points, topOffset, depth, fill, opacity){
+    const upper = points.map(([x, y]) => [x, y + topOffset]);
+    const lower = points.slice().reverse().map(([x, y]) => [x, y + topOffset + depth]);
+    const path = 'M' + upper.map(p => p[0].toFixed(0) + ',' + p[1].toFixed(1)).join(' L') +
+      ' L' + lower.map(p => p[0].toFixed(0) + ',' + p[1].toFixed(1)).join(' L') + ' Z';
+    return `<path d="${path}" fill="${fill}" opacity="${opacity}"/>`;
+  }
+  function foamHook(x, y, deg, s, flip){
+    const mirror = flip ? -1 : 1;
+    return `<path d="M0,0 C12,11 10,29 -7,36 C9,36 24,27 23,11 C35,23 38,46 17,57 C-4,68 -24,54 -14,33 C-9,20 -2,9 0,0 Z"
+      fill="var(--foam)" stroke="var(--wave-ink)" stroke-width="1.1"
+      transform="translate(${x.toFixed(1)},${y.toFixed(1)}) rotate(${deg.toFixed(1)}) scale(${(s * mirror).toFixed(2)},${s.toFixed(2)})"/>`;
+  }
+  function foamDotCluster(cx, cy, count, spreadX, spreadY){
+    let dots = '';
+    for(let i = 0; i < count; i++){
+      const x = cx + (Math.random() - .5) * spreadX;
+      const y = cy + (Math.random() - .5) * spreadY;
+      const r = .9 + Math.random() * 2.4;
+      dots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"/>`;
+    }
+    return dots;
+  }
+  function topImpactSVG(){
+    const W = 1200;
+    let hooks = '';
+    for(let i = 0; i < 18; i++){
+      const x = 280 + i * 38 + Math.random() * 24;
+      const y = 72 + Math.sin(i * .9) * 24 + Math.random() * 14;
+      hooks += foamHook(x, y, 78 + Math.random() * 48, .32 + Math.random() * .2, i % 2);
+    }
+    let dots = '';
+    [[430,98,26,240,52],[610,74,34,300,70],[760,106,22,220,54]].forEach(args=>{
+      dots += foamDotCluster(...args);
+    });
+    return `
+    <svg viewBox="0 0 ${W} 260" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M384,90 C466,14 704,10 812,86 C745,144 483,154 384,90 Z" fill="var(--water-deep)" stroke="var(--wave-ink)" stroke-width="6"/>
+      <path d="M334,118 C454,42 743,36 880,112 C756,190 464,198 334,118 Z" fill="none" stroke="var(--foam)" stroke-width="13" stroke-linejoin="round"/>
+      <path d="M240,144 C370,76 812,70 986,142" fill="none" stroke="var(--water-light)" stroke-width="16" stroke-linecap="round"/>
+      ${hooks}
+      <g fill="var(--foam)">${dots}</g>
+    </svg>`;
+  }
+
+  function washSVG(){
+    const W = 1200;
+    const H = 1000;
+
+    // sample the crest line
+    const pts = [];
+    for(let x = 0; x <= W; x += 10) pts.push([x, crestY(x)]);
+    const front = crestPath(pts);
+
+    // the solid sheet below the crest; the uncovered area above it is the reveal.
+    const bodyPath = `M0,${H} L${W},${H} L${W},${crestY(W).toFixed(1)} ` +
+      pts.slice().reverse().map(p => 'L' + p[0].toFixed(0) + ',' + p[1].toFixed(1)).join(' ') + ' Z';
+
+    let bands = '';
+    bands += filledBand(pts, 44, 74, 'var(--water)', .78);
+    bands += filledBand(pts, 128, 46, 'var(--water-light)', .68);
+    bands += filledBand(pts, 205, 88, 'var(--water)', .46);
+    bands += filledBand(pts, 340, 58, 'var(--water-light)', .36);
+
+    let hooks = '';
+    for(let x = -4; x < W + 36; x += 32 + Math.random()*16){
+      const y = crestY(x);
+      const deg = Math.atan(crestSlope(x)) * 180/Math.PI + 86 + (Math.random()*14 - 7);
+      const lead = (270 - y) / 72;
+      const s = .44 + Math.random()* .22 + Math.max(0, lead) * .18;
+      hooks += foamHook(x, y + 3, deg, s, Math.random() < .5);
+    }
+    for(let x = 24; x < W; x += 74 + Math.random()*34){
+      const y = crestY(x) + 58 + Math.random()*36;
+      const deg = Math.atan(crestSlope(x)) * 180/Math.PI + 96 + (Math.random()*18 - 9);
+      hooks += foamHook(x, y, deg, .26 + Math.random()* .17, Math.random() < .45);
+    }
+
+    let foam = '';
+    for(let x = 52; x < W; x += 128 + Math.random()*64){
+      foam += foamDotCluster(x, crestY(x) + 38 + Math.random()*84, 20 + Math.floor(Math.random()*18), 150, 92);
+    }
+    for(let k = 0; k < 11; k++){
+      const x = 60 + Math.random() * (W - 120);
+      const y = crestY(x) - 44 - Math.random()*62;
+      foam += foamDotCluster(x, y, 7 + Math.floor(Math.random()*9), 90, 42);
+    }
+
+    return `
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="${bodyPath}" fill="var(--water-deep)"/>
+      ${bands}
+      <path d="${front}" fill="none" stroke="var(--wave-ink)" stroke-width="17" stroke-linejoin="round" stroke-linecap="butt"/>
+      <path d="${front}" fill="none" stroke="var(--foam)" stroke-width="11" stroke-linejoin="round" stroke-linecap="butt"/>
+      ${hooks}
+      <g fill="var(--foam)">${foam}</g>
+    </svg>`;
+  }
+
+  function footSplash(){
+    if(reduceMotion) return;
+    const cx = innerWidth / 2;
+    const cy = Math.max(26, innerHeight * 0.035);
+
+    const impact = document.createElement('div');
+    impact.className = 'pov-impact';
+    impact.innerHTML = topImpactSVG();
+    rain.appendChild(impact);
+    setTimeout(()=>impact.remove(), 1050);
+
+    // the impact where your foot lands, at the top of the view
+    const maxDim = Math.max(innerWidth, innerHeight) * 1.6;
+    [.64, .38, .2].forEach((f, idx)=>{
+      setTimeout(()=>{
+        const r = document.createElement('span');
+        r.className = 'ring foam-ring go';
+        r.style.left = cx + 'px';
+        r.style.top = cy + 'px';
+        r.style.width = r.style.height = (maxDim * f) + 'px';
+        rain.appendChild(r);
+        setTimeout(()=>r.remove(), 1500);
+      }, idx * 100);
+    });
+    // droplets kicked down-screen and outward from the top edge
+    for(let d = 0; d < 34; d++){
+      const drop = document.createElement('span');
+      drop.className = 'drop go' + (Math.random() < .45 ? ' foamy' : '');
+      const ang = Math.PI/2 + (Math.random() - .5) * Math.PI * .9; // mostly downward
+      const dist = 170 + Math.random() * 430;
+      drop.style.setProperty('--dx', Math.cos(ang) * dist + 'px');
+      drop.style.setProperty('--dy', Math.sin(ang) * dist + 'px');
+      drop.style.left = (cx + (Math.random() - .5) * innerWidth * .26) + 'px';
+      drop.style.top = cy + Math.random() * 28 + 'px';
+      rain.appendChild(drop);
+      setTimeout(()=>drop.remove(), 1200);
+    }
+
+    // the sheet of water washing down the screen
+    const wash = document.createElement('div');
+    wash.className = 'wash';
+    wash.innerHTML = washSVG();
+    rain.appendChild(wash);
+    setTimeout(()=>wash.remove(), 2350);
+  }
+
+  /* -------- the veil -------- */
+  const veil = document.getElementById('veil');
+  const site = document.getElementById('site');
+  const cursorHint = document.getElementById('cursorHint');
+  let opened = false;
+
+  const hintTimer = setTimeout(()=>veil.classList.add('hinting'), 3200);
+
+  veil.addEventListener('pointermove', e=>{
+    if(opened || e.pointerType === 'touch') return;
+    cursorHint.style.left = (e.clientX + 16) + 'px';
+    cursorHint.style.top  = (e.clientY - 12) + 'px';
+    cursorHint.classList.add('on');
+  });
+  veil.addEventListener('pointerleave', ()=>cursorHint.classList.remove('on'));
+
+  let veilDrip;
+  function veilDrizzle(){
+    if(opened) return;
+    splash(innerWidth * (0.15 + Math.random() * 0.7), innerHeight * (0.15 + Math.random() * 0.7), 30 + Math.random() * 30, Math.random() < .25);
+    veilDrip = setTimeout(veilDrizzle, 3800 + Math.random() * 3200);
+  }
+  if(!reduceMotion) veilDrip = setTimeout(veilDrizzle, 1600);
+
+  function enter(clickX, clickY){
+    if(opened) return;
+    opened = true;
+    clearTimeout(hintTimer);
+    clearTimeout(veilDrip);
+    cursorHint.classList.remove('on');
+    footSplash(); // the step lands at the top of the view, like looking down
+    veil.classList.add('gone');
+    site.setAttribute('aria-hidden', 'false');
+    site.classList.add('open');
+    setTimeout(()=>{
+      site.classList.add('settled');
+      if(!reduceMotion) setTimeout(drizzle, 4000);
+    }, 2300);
+  }
+
+  veil.addEventListener('pointerdown', e=>enter(e.clientX, e.clientY));
+  veil.addEventListener('keydown', e=>{
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      enter(null, null);
+    }
+  });
+  if(reduceMotion){
+    opened = true;
+    veil.classList.add('gone');
+    site.setAttribute('aria-hidden', 'false');
+    site.classList.add('open', 'settled');
+  }
+
+  /* -------- after entry -------- */
+  document.addEventListener('pointerdown', e=>{
+    if(!opened || e.target.closest('.veil')) return;
+    splash(e.clientX, e.clientY, 100, !!e.target.closest('.name-block'));
+  });
+  function drizzle(){
+    if(!opened) return;
+    splash(Math.random() * innerWidth, Math.random() * innerHeight, 34 + Math.random() * 36, Math.random() < .2);
+    setTimeout(drizzle, 9000 + Math.random() * 8000);
+  }
+
+  /* -------- lamp toggle -------- */
+  const lampToggle = document.getElementById('lampToggle');
+  lampToggle.addEventListener('click', ()=>{
+    const day = document.body.classList.toggle('day');
+    lampToggle.textContent = day ? 'lamp: off' : 'lamp: on';
+    lampToggle.setAttribute('aria-pressed', String(day));
+  });
+
+  /* -------- stir the puddle -------- */
+  const puddle = document.getElementById('puddle');
+  const nameBlock = document.getElementById('nameBlock');
+  const fortune = document.getElementById('fortune');
+  const fortunes = [
+    "You stepped in it. Worth it, honestly.",
+    "The reflection settles. So do most problems.",
+    "Wet socks, dry wit.",
+    "Every good project starts with a misstep.",
+    "That's the whole puddle. But wasn't the dip worth it?"
+  ];
+  let i = 0;
+  function stir(){
+    puddle.classList.add('stirred');
+    setTimeout(()=>puddle.classList.remove('stirred'), 900);
+    fortune.classList.remove('show');
+    setTimeout(()=>{
+      fortune.textContent = fortunes[i++ % fortunes.length];
+      fortune.classList.add('show');
+    }, 160);
+  }
+  nameBlock.addEventListener('click', stir);
+  nameBlock.addEventListener('keydown', e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();stir();}
+  });
+
+  /* -------- the boat -------- */
+  const boat = document.getElementById('boat');
+  function sail(){
+    const r = boat.getBoundingClientRect();
+    splash(r.left + r.width/2, r.top + r.height*0.8, 70);
+  }
+  boat.addEventListener('click', sail);
+  boat.addEventListener('keydown', e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();sail();}
+  });
+</script>
+</body>
+</html>
