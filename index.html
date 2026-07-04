@@ -105,11 +105,17 @@
   nav a:hover, nav a:focus-visible{color:var(--lamp)}
   .lamp-toggle{
     background:none;border:0;cursor:pointer;
+    display:inline-flex;align-items:center;gap:6px;
     font-family:inherit;font-size:.9rem;color:var(--muted);
     text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:3px;
     transition:color .2s;
   }
   .lamp-toggle:hover, .lamp-toggle:focus-visible{color:var(--lamp)}
+  .lamp-toggle svg{
+    width:1em;height:1em;flex:0 0 auto;
+    stroke:currentColor;fill:none;stroke-width:1.9;
+    stroke-linecap:round;stroke-linejoin:round;
+  }
 
   .echo{position:relative;display:inline-block}
   .echo::before, .echo::after{
@@ -279,7 +285,15 @@
       <a href="#experience">experience</a>
       <a href="#outside">off hours</a>
     </nav>
-    <button class="lamp-toggle" id="lampToggle" aria-pressed="false">lamp: on</button>
+    <button class="lamp-toggle" id="lampToggle" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M9 2h6l2.5 8h-11L9 2Z"/>
+        <path d="M12 10v7"/>
+        <path d="M8 22h8"/>
+        <path d="M10 17h4"/>
+      </svg>
+      <span id="lampLabel">lamp: on</span>
+    </button>
   </div>
 
   <hr>
@@ -598,9 +612,10 @@
 
   /* -------- lamp toggle -------- */
   const lampToggle = document.getElementById('lampToggle');
+  const lampLabel = document.getElementById('lampLabel');
   lampToggle.addEventListener('click', ()=>{
     const day = document.body.classList.toggle('day');
-    lampToggle.textContent = day ? 'lamp: off' : 'lamp: on';
+    lampLabel.textContent = day ? 'lamp: off' : 'lamp: on';
     lampToggle.setAttribute('aria-pressed', String(day));
   });
 
