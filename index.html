@@ -15,9 +15,6 @@
     --muted:#8E96AE;
     --lamp:#E3A45F;
     --rule:rgba(142,150,174,.25);
-    --rule-strong:rgba(237,230,216,.42);
-    --tile:rgba(237,230,216,.09);
-    --tile-shadow:rgba(7,10,24,.55);
     --water:#4A6FB5;
     --water-deep:#25407E;
     --water-light:#A8C3E8;
@@ -33,9 +30,6 @@
     --muted:#767B90;
     --lamp:#B96F2C;
     --rule:rgba(43,43,52,.2);
-    --rule-strong:rgba(43,43,52,.42);
-    --tile:rgba(43,43,52,.06);
-    --tile-shadow:rgba(43,43,52,.18);
     --water-light:#9FBBEA;
     --foam:#FDFBF5;
     --echo1:rgba(74,111,181,.45);
@@ -89,7 +83,7 @@
 
   /* ================= the site: revealed top to bottom ================= */
   .wrap{
-    min-height:100dvh;height:auto;max-width:780px;margin:0 auto;
+    min-height:100dvh;height:auto;max-width:760px;margin:0 auto;
     padding:clamp(24px,4.5vh,48px) clamp(20px,4vw,40px);
     display:flex;flex-direction:column;
     position:relative;z-index:1;
@@ -137,7 +131,7 @@
   section:hover h2 .echo::before, section:focus-within h2 .echo::before{opacity:1;transform:translate(2px,2px)}
   section:hover h2 .echo::after,  section:focus-within h2 .echo::after {opacity:1;transform:translate(4px,4px)}
 
-  header{margin-top:clamp(8px,1.5vh,16px);display:flex;gap:24px;align-items:flex-start}
+  header{margin-top:clamp(12px,2.4vh,28px)}
   .head-text{flex:1;min-width:0}
   .name-block{cursor:pointer;width:max-content;max-width:100%;outline:none;-webkit-tap-highlight-color:transparent}
   .name-block:focus-visible h1{text-decoration:underline;text-decoration-color:var(--lamp);text-underline-offset:6px}
@@ -160,33 +154,7 @@
   .reflection .dip{color:var(--lamp);opacity:.8}
   .puddle.stirred .reflection{filter:blur(4.5px);opacity:.25;transform:scaleY(-1) skewX(-6deg) translateY(2px)}
 
-  .signature-mark{
-    flex:0 0 auto;width:clamp(84px,9vw,116px);
-    cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
-    display:grid;grid-template-columns:1fr .68fr;grid-template-rows:1fr .62fr;
-    gap:6px;transform:translateY(2px);
-  }
-  .signature-mark:focus-visible{outline:1px dashed var(--rule);outline-offset:6px}
-  .tile{
-    min-height:38px;border:1px solid var(--rule-strong);
-    background:linear-gradient(145deg,var(--foam),rgba(237,230,216,.78));
-    color:var(--bg);box-shadow:7px 8px 0 var(--tile-shadow);
-    display:grid;place-items:center;
-    font-family:'Young Serif',serif;font-size:1rem;line-height:1;
-    transition:transform .35s cubic-bezier(.3,.7,.3,1.2), box-shadow .35s;
-  }
-  .tile.primary{
-    grid-row:1 / span 2;min-height:96px;
-    font-size:1.3rem;letter-spacing:.05em;
-  }
-  .tile small{display:block;font-family:'Karla',sans-serif;font-size:.58rem;letter-spacing:.18em;margin-top:7px;color:var(--water-deep)}
-  .tile.pattern{
-    background:linear-gradient(145deg,rgba(237,230,216,.92),rgba(237,230,216,.66));
-    font-family:'Karla',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.18em;
-  }
-  .signature-mark:hover .tile, .signature-mark:focus-visible .tile{transform:translate(-2px,-2px);box-shadow:10px 11px 0 var(--tile-shadow)}
-
-  .tagline{margin-top:10px;max-width:42ch;line-height:1.55}
+  .tagline{margin-top:10px;max-width:46ch;line-height:1.55}
   .tagline em{color:var(--muted)}
   .fortune{
     min-height:1.3em;margin-top:6px;
@@ -196,24 +164,30 @@
   }
   .fortune.show{opacity:1;transform:none}
 
-  main{flex:0 0 auto;display:block;min-height:0;border-bottom:1px solid var(--rule)}
-  section{
-    min-width:0;display:grid;grid-template-columns:118px minmax(0,1fr);
-    gap:clamp(18px,3vw,34px);padding:clamp(13px,2.1vh,19px) 0;
-    border-top:1px solid var(--rule);
+  main{
+    flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;
+    gap:clamp(16px,2.4vh,22px) clamp(34px,6vw,82px);
+    align-content:start;min-height:0;
   }
+  section{
+    min-width:0;padding-top:clamp(4px,1vh,8px);
+  }
+  section:focus{outline:none}
+  section:focus-visible h2{text-decoration:underline;text-decoration-color:var(--lamp);text-underline-offset:5px}
   h2{
     font-size:.78rem;font-weight:700;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--muted);margin:0;
+    text-transform:uppercase;color:var(--muted);margin-bottom:.55em;
   }
   p, li{line-height:1.55;font-size:.92rem}
   ul{list-style:none}
   li{display:flex;justify-content:space-between;gap:14px;padding:.13em 0}
   li .when{color:var(--muted);white-space:nowrap;font-size:.86em}
   .hush{
-    display:block;color:var(--muted);font-style:italic;font-size:.86rem;margin-top:.5em;
+    display:block;color:var(--muted);font-style:italic;font-size:.86rem;
+    max-height:0;opacity:0;overflow:hidden;
+    transition:max-height .35s, opacity .35s, margin .35s;
   }
-  section > .hush{grid-column:2}
+  section:hover .hush, section:focus-within .hush{max-height:4em;opacity:1;margin-top:.45em}
   .index-text{max-width:46ch}
 
   footer{font-size:.9rem;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap}
@@ -275,9 +249,7 @@
   @media (max-width:680px){
     body{overflow:auto}
     .wrap{height:auto;min-height:100dvh}
-    section{grid-template-columns:1fr;gap:8px}
-    section > .hush{grid-column:auto}
-    .signature-mark{display:none}
+    main{grid-template-columns:1fr}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
@@ -329,11 +301,6 @@
       <p class="fortune" id="fortune" aria-live="polite"></p>
     </div>
 
-    <div class="signature-mark" id="signatureMark" tabindex="0" role="button" aria-label="A tile mark. Tap it." title="small structure">
-      <div class="tile primary">HW<small>INDEX</small></div>
-      <div class="tile pattern">03</div>
-      <div class="tile pattern">08</div>
-    </div>
   </header>
 
   <hr>
@@ -352,7 +319,7 @@
         <li><a href="#">Project 2</a></li>
         <li><a href="#">Project 3</a></li>
       </ul>
-      <span class="hush">Selected things, left as placeholders for now.</span>
+      <span class="hush">Placeholders for the pieces that will eventually carry the page.</span>
     </section>
 
     <section id="notes" tabindex="0">
@@ -362,7 +329,7 @@
         <li><span>Shadow · Space</span></li>
         <li><span>Poetics · Interface</span></li>
       </ul>
-      <span class="hush">A future place for fragments, observations, and small essays.</span>
+      <span class="hush">Fragments, observations, small essays, maybe nothing too loud.</span>
     </section>
 
     <section id="outside" tabindex="0">
@@ -637,7 +604,7 @@
     "The reflection settles. The structure stays.",
     "Pattern first, explanation later.",
     "A page can be a little house.",
-    "The tile turns. The index shifts."
+    "The room shifts when the light changes."
   ];
   let i = 0;
   function stir(){
@@ -654,16 +621,6 @@
     if(e.key==='Enter'||e.key===' '){e.preventDefault();stir();}
   });
 
-  /* -------- the tile mark -------- */
-  const signatureMark = document.getElementById('signatureMark');
-  function tapMark(){
-    const r = signatureMark.getBoundingClientRect();
-    splash(r.left + r.width/2, r.top + r.height/2, 74);
-  }
-  signatureMark.addEventListener('click', tapMark);
-  signatureMark.addEventListener('keydown', e=>{
-    if(e.key==='Enter'||e.key===' '){e.preventDefault();tapMark();}
-  });
 </script>
 </body>
 </html>
