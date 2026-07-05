@@ -9,8 +9,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Karla:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#161D31;
-    --glow:rgba(227,164,95,.07);
+    --bg:#1B2542;
+    --glow:rgba(227,164,95,.08);
     --ink:#EDE6D8;
     --muted:#8E96AE;
     --lamp:#E3A45F;
@@ -83,9 +83,9 @@
 
   /* ================= the site: revealed top to bottom ================= */
   .wrap{
-    min-height:100dvh;height:auto;max-width:760px;margin:0 auto;
-    padding:clamp(24px,4.5vh,48px) clamp(20px,4vw,40px);
-    display:flex;flex-direction:column;
+    min-height:100dvh;height:auto;width:100%;max-width:none;margin:0;
+    padding:clamp(22px,4vh,46px) clamp(20px,4.8vw,64px);
+    display:grid;grid-template-rows:auto 1fr auto;
     position:relative;z-index:1;
     clip-path:inset(0 0 100% 0);
     visibility:hidden;
@@ -97,13 +97,17 @@
   }
   .wrap.open.settled{clip-path:none}
 
-  hr{border:0;border-top:1px solid var(--rule);margin:clamp(12px,2vh,18px) 0}
+  hr{display:none}
 
-  .topbar{display:flex;align-items:baseline;gap:20px}
-  nav{display:flex;gap:20px;font-size:.9rem;flex:1}
+  .topbar{display:contents}
+  nav{
+    position:fixed;left:clamp(20px,4.8vw,64px);top:clamp(18px,3.8vh,42px);
+    display:flex;gap:20px;font-size:.9rem;z-index:3;
+  }
   nav a{color:var(--muted)}
   nav a:hover, nav a:focus-visible{color:var(--lamp)}
   .lamp-toggle{
+    position:fixed;right:clamp(20px,4.8vw,64px);top:clamp(18px,3.8vh,42px);z-index:3;
     background:none;border:0;cursor:pointer;
     display:inline-flex;align-items:center;gap:6px;
     font-family:inherit;font-size:.9rem;color:var(--muted);
@@ -131,7 +135,12 @@
   section:hover h2 .echo::before, section:focus-within h2 .echo::before{opacity:1;transform:translate(2px,2px)}
   section:hover h2 .echo::after,  section:focus-within h2 .echo::after {opacity:1;transform:translate(4px,4px)}
 
-  header{margin-top:clamp(12px,2.4vh,28px)}
+  header{
+    align-self:center;
+    margin:0 0 0 clamp(0px,10vw,150px);
+    max-width:min(52vw,620px);
+    transform:translateY(-3vh);
+  }
   .head-text{flex:1;min-width:0}
   .name-block{cursor:pointer;width:max-content;max-width:100%;outline:none;-webkit-tap-highlight-color:transparent}
   .name-block:focus-visible h1{text-decoration:underline;text-decoration-color:var(--lamp);text-underline-offset:6px}
@@ -165,9 +174,11 @@
   .fortune.show{opacity:1;transform:none}
 
   main{
-    flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;
-    gap:clamp(16px,2.4vh,22px) clamp(34px,6vw,82px);
-    align-content:start;min-height:0;
+    align-self:end;
+    display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));
+    gap:clamp(18px,3vw,56px);
+    align-content:end;min-height:0;
+    padding-bottom:clamp(54px,9vh,92px);
   }
   section{
     min-width:0;padding-top:clamp(4px,1vh,8px);
@@ -190,11 +201,17 @@
   section:hover .hush, section:focus-within .hush{max-height:4em;opacity:1;margin-top:.45em}
   .index-text{max-width:46ch}
 
-  footer{font-size:.9rem;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap}
-  footer ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px 24px;flex:1}
+  footer{display:contents;font-size:.9rem}
+  footer ul{
+    position:fixed;left:clamp(20px,4.8vw,64px);bottom:clamp(18px,3.8vh,42px);z-index:3;
+    list-style:none;display:flex;flex-wrap:wrap;gap:6px 24px;
+  }
   footer a{color:var(--muted)}
   footer a:hover, footer a:focus-visible{color:var(--lamp)}
-  .colophon{color:var(--muted);font-size:.8rem;font-style:italic}
+  .colophon{
+    position:fixed;right:clamp(20px,4.8vw,64px);bottom:clamp(18px,3.8vh,42px);z-index:3;
+    color:var(--muted);font-size:.8rem;font-style:italic;
+  }
 
   /* ================= water FX ================= */
   .rain-layer{position:fixed;inset:0;pointer-events:none;z-index:20}
@@ -248,8 +265,14 @@
 
   @media (max-width:680px){
     body{overflow:auto}
-    .wrap{height:auto;min-height:100dvh}
+    .wrap{height:auto;min-height:100dvh;display:flex;gap:0;padding-bottom:110px}
+    nav,.lamp-toggle,footer ul,.colophon{position:static}
+    .topbar{display:flex;align-items:baseline;gap:20px}
+    nav{flex-wrap:wrap;gap:14px;flex:1}
+    header{margin-top:clamp(28px,7vh,64px);margin-left:0;max-width:none;transform:none}
     main{grid-template-columns:1fr}
+    footer{display:flex;align-items:baseline;gap:20px;flex-wrap:wrap;margin-top:clamp(24px,6vh,48px)}
+    footer ul{gap:6px 20px}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
