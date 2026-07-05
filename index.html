@@ -15,6 +15,9 @@
     --muted:#8E96AE;
     --lamp:#E3A45F;
     --rule:rgba(142,150,174,.25);
+    --rule-strong:rgba(237,230,216,.42);
+    --tile:rgba(237,230,216,.09);
+    --tile-shadow:rgba(7,10,24,.55);
     --water:#4A6FB5;
     --water-deep:#25407E;
     --water-light:#A8C3E8;
@@ -30,13 +33,16 @@
     --muted:#767B90;
     --lamp:#B96F2C;
     --rule:rgba(43,43,52,.2);
+    --rule-strong:rgba(43,43,52,.42);
+    --tile:rgba(43,43,52,.06);
+    --tile-shadow:rgba(43,43,52,.18);
     --water-light:#9FBBEA;
     --foam:#FDFBF5;
     --echo1:rgba(74,111,181,.45);
     --echo2:rgba(37,64,126,.3);
   }
   *{margin:0;padding:0;box-sizing:border-box}
-  html,body{height:100dvh}
+  html,body{min-height:100dvh}
   body{
     font-family:'Karla',sans-serif;
     font-size:15px;
@@ -44,7 +50,7 @@
       radial-gradient(800px 500px at 85% -15%, var(--glow), transparent 60%),
       var(--bg);
     color:var(--ink);
-    overflow:hidden;
+    overflow:auto;
     -webkit-font-smoothing:antialiased;
     transition:background .5s, color .5s;
   }
@@ -83,7 +89,7 @@
 
   /* ================= the site: revealed top to bottom ================= */
   .wrap{
-    height:100dvh;max-width:860px;margin:0 auto;
+    min-height:100dvh;height:auto;max-width:780px;margin:0 auto;
     padding:clamp(24px,4.5vh,48px) clamp(20px,4vw,40px);
     display:flex;flex-direction:column;
     position:relative;z-index:1;
@@ -97,7 +103,7 @@
   }
   .wrap.open.settled{clip-path:none}
 
-  hr{border:0;border-top:1px solid var(--rule);margin:clamp(12px,2vh,20px) 0}
+  hr{border:0;border-top:1px solid var(--rule);margin:clamp(12px,2vh,18px) 0}
 
   .topbar{display:flex;align-items:baseline;gap:20px}
   nav{display:flex;gap:20px;font-size:.9rem;flex:1}
@@ -154,20 +160,33 @@
   .reflection .dip{color:var(--lamp);opacity:.8}
   .puddle.stirred .reflection{filter:blur(4.5px);opacity:.25;transform:scaleY(-1) skewX(-6deg) translateY(2px)}
 
-  .boat{
-    flex:0 0 auto;width:clamp(72px,8vw,104px);
+  .signature-mark{
+    flex:0 0 auto;width:clamp(84px,9vw,116px);
     cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+    display:grid;grid-template-columns:1fr .68fr;grid-template-rows:1fr .62fr;
+    gap:6px;transform:translateY(2px);
   }
-  .boat svg{width:100%;height:auto;overflow:visible}
-  .boat .hull{transition:transform .4s ease;transform-origin:50% 80%}
-  .boat:hover .hull, .boat:focus-visible .hull{animation:bob 1.6s ease-in-out infinite}
-  @keyframes bob{
-    0%,100%{transform:rotate(-2.5deg) translateY(0)}
-    50%{transform:rotate(2.5deg) translateY(2px)}
+  .signature-mark:focus-visible{outline:1px dashed var(--rule);outline-offset:6px}
+  .tile{
+    min-height:38px;border:1px solid var(--rule-strong);
+    background:linear-gradient(145deg,var(--foam),rgba(237,230,216,.78));
+    color:var(--bg);box-shadow:7px 8px 0 var(--tile-shadow);
+    display:grid;place-items:center;
+    font-family:'Young Serif',serif;font-size:1rem;line-height:1;
+    transition:transform .35s cubic-bezier(.3,.7,.3,1.2), box-shadow .35s;
   }
-  .boat:focus-visible{outline:1px dashed var(--rule);outline-offset:4px;border-radius:8px}
+  .tile.primary{
+    grid-row:1 / span 2;min-height:96px;
+    font-size:1.3rem;letter-spacing:.05em;
+  }
+  .tile small{display:block;font-family:'Karla',sans-serif;font-size:.58rem;letter-spacing:.18em;margin-top:7px;color:var(--water-deep)}
+  .tile.pattern{
+    background:linear-gradient(145deg,rgba(237,230,216,.92),rgba(237,230,216,.66));
+    font-family:'Karla',sans-serif;font-weight:700;font-size:.72rem;letter-spacing:.18em;
+  }
+  .signature-mark:hover .tile, .signature-mark:focus-visible .tile{transform:translate(-2px,-2px);box-shadow:10px 11px 0 var(--tile-shadow)}
 
-  .tagline{margin-top:10px;max-width:52ch;line-height:1.55}
+  .tagline{margin-top:10px;max-width:42ch;line-height:1.55}
   .tagline em{color:var(--muted)}
   .fortune{
     min-height:1.3em;margin-top:6px;
@@ -177,26 +196,25 @@
   }
   .fortune.show{opacity:1;transform:none}
 
-  main{
-    flex:1;display:grid;grid-template-columns:1fr 1fr;
-    gap:clamp(10px,2vh,18px) clamp(32px,5vw,64px);
-    align-content:start;min-height:0;
+  main{flex:0 0 auto;display:block;min-height:0;border-bottom:1px solid var(--rule)}
+  section{
+    min-width:0;display:grid;grid-template-columns:118px minmax(0,1fr);
+    gap:clamp(18px,3vw,34px);padding:clamp(13px,2.1vh,19px) 0;
+    border-top:1px solid var(--rule);
   }
-  section{min-width:0}
   h2{
     font-size:.78rem;font-weight:700;letter-spacing:.13em;
-    text-transform:uppercase;color:var(--muted);margin-bottom:.5em;
+    text-transform:uppercase;color:var(--muted);margin:0;
   }
   p, li{line-height:1.55;font-size:.92rem}
   ul{list-style:none}
-  li{display:flex;justify-content:space-between;gap:14px;padding:.14em 0}
+  li{display:flex;justify-content:space-between;gap:14px;padding:.13em 0}
   li .when{color:var(--muted);white-space:nowrap;font-size:.86em}
   .hush{
-    display:block;color:var(--muted);font-style:italic;font-size:.86rem;
-    max-height:0;opacity:0;overflow:hidden;
-    transition:max-height .35s, opacity .35s, margin .35s;
+    display:block;color:var(--muted);font-style:italic;font-size:.86rem;margin-top:.5em;
   }
-  section:hover .hush, section:focus-within .hush{max-height:3em;opacity:1;margin-top:.45em}
+  section > .hush{grid-column:2}
+  .index-text{max-width:46ch}
 
   footer{font-size:.9rem;display:flex;align-items:baseline;gap:24px;flex-wrap:wrap}
   footer ul{list-style:none;display:flex;flex-wrap:wrap;gap:6px 24px;flex:1}
@@ -257,8 +275,9 @@
   @media (max-width:680px){
     body{overflow:auto}
     .wrap{height:auto;min-height:100dvh}
-    main{grid-template-columns:1fr}
-    .boat{display:none}
+    section{grid-template-columns:1fr;gap:8px}
+    section > .hush{grid-column:auto}
+    .signature-mark{display:none}
   }
   @media (prefers-reduced-motion:reduce){
     *{transition:none !important;animation:none !important}
@@ -281,8 +300,8 @@
   <div class="topbar">
     <nav aria-label="Sections">
       <a href="#about">about</a>
-      <a href="#projects">projects</a>
-      <a href="#experience">experience</a>
+      <a href="#work">work</a>
+      <a href="#notes">notes</a>
       <a href="#outside">off hours</a>
     </nav>
     <button class="lamp-toggle" id="lampToggle" aria-pressed="false">
@@ -306,24 +325,14 @@
           <div class="reflection" aria-hidden="true">Hudson Wang<span class="dip">.</span></div>
         </div>
       </div>
-      <p class="tagline">I am a cute cat</p>
+      <p class="tagline">I study patterns, interfaces, and small structures for thinking.</p>
       <p class="fortune" id="fortune" aria-live="polite"></p>
     </div>
 
-    <div class="boat" id="boat" tabindex="0" role="button" aria-label="A little paper boat. Tap it." title="she's seaworthy, mostly">
-      <svg viewBox="0 0 110 84" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g class="hull" fill="none" stroke="var(--ink)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round">
-          <path d="M14,52 L96,52 L78,68 L32,68 Z" fill="var(--foam)" fill-opacity=".9"/>
-          <path d="M55,18 L34,52 L76,52 Z" fill="var(--foam)" fill-opacity=".9"/>
-          <path d="M55,18 L55,52"/>
-          <path d="M55,18 L34,52" stroke-width="1.6" opacity=".5"/>
-          <circle cx="55" cy="14" r="2.4" fill="var(--lamp)" stroke="none"/>
-        </g>
-        <g stroke="var(--water)" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8">
-          <path d="M8,74 q8,-6 16,0 q8,6 16,0"/>
-          <path d="M62,76 q8,-6 16,0 q8,6 16,0"/>
-        </g>
-      </svg>
+    <div class="signature-mark" id="signatureMark" tabindex="0" role="button" aria-label="A tile mark. Tap it." title="small structure">
+      <div class="tile primary">HW<small>INDEX</small></div>
+      <div class="tile pattern">03</div>
+      <div class="tile pattern">08</div>
     </div>
   </header>
 
@@ -332,33 +341,33 @@
   <main>
     <section id="about" tabindex="0">
       <h2><span class="echo" data-text="About">About</span></h2>
-      <p>Meow meow meow. Meow meow meow meow, meow meow. Meow meow meow meow meow meow.</p>
+      <p class="index-text">Meow meow meow. Meow meow meow meow, meow meow. Meow meow meow meow meow meow.</p>
       <span class="hush">Meow meow meow.</span>
     </section>
 
-    <section id="projects" tabindex="0">
-      <h2><span class="echo" data-text="Projects">Projects</span></h2>
+    <section id="work" tabindex="0">
+      <h2><span class="echo" data-text="Work">Work</span></h2>
       <ul>
         <li><a href="#">Project 1</a></li>
         <li><a href="#">Project 2</a></li>
         <li><a href="#">Project 3</a></li>
       </ul>
-      <span class="hush">Project notes go here.</span>
+      <span class="hush">Selected things, left as placeholders for now.</span>
     </section>
 
-    <section id="experience" tabindex="0">
-      <h2><span class="echo" data-text="Experience">Experience</span></h2>
+    <section id="notes" tabindex="0">
+      <h2><span class="echo" data-text="Notes">Notes</span></h2>
       <ul>
-        <li><span>Title · Company</span></li>
-        <li><span>Title · Company</span></li>
-        <li><span>Title · Company</span></li>
+        <li><span>Pattern · Structure</span></li>
+        <li><span>Shadow · Space</span></li>
+        <li><span>Poetics · Interface</span></li>
       </ul>
-      <span class="hush">Experience notes go here.</span>
+      <span class="hush">A future place for fragments, observations, and small essays.</span>
     </section>
 
     <section id="outside" tabindex="0">
       <h2><span class="echo" data-text="Off hours">Off hours</span></h2>
-      <p>Studying Mahjong, aesthetics, poetics, shadow play, and brutalist architecture as frameworks for understanding pattern, structure, and the way I perceive the world.</p>
+      <p class="index-text">Studying Mahjong, aesthetics, poetics, shadow play, and brutalist architecture as frameworks for understanding pattern, structure, and the way I perceive the world.</p>
       <span class="hush">Small moves, long echoes, rooms that know how to hold a mood.</span>
     </section>
   </main>
@@ -624,11 +633,11 @@
   const nameBlock = document.getElementById('nameBlock');
   const fortune = document.getElementById('fortune');
   const fortunes = [
-    "You stepped in it. Worth it, honestly.",
-    "The reflection settles. So do most problems.",
-    "Wet socks, dry wit.",
-    "Every good project starts with a misstep.",
-    "That's the whole puddle. But wasn't the dip worth it?"
+    "Small moves change the room.",
+    "The reflection settles. The structure stays.",
+    "Pattern first, explanation later.",
+    "A page can be a little house.",
+    "The tile turns. The index shifts."
   ];
   let i = 0;
   function stir(){
@@ -645,15 +654,15 @@
     if(e.key==='Enter'||e.key===' '){e.preventDefault();stir();}
   });
 
-  /* -------- the boat -------- */
-  const boat = document.getElementById('boat');
-  function sail(){
-    const r = boat.getBoundingClientRect();
-    splash(r.left + r.width/2, r.top + r.height*0.8, 70);
+  /* -------- the tile mark -------- */
+  const signatureMark = document.getElementById('signatureMark');
+  function tapMark(){
+    const r = signatureMark.getBoundingClientRect();
+    splash(r.left + r.width/2, r.top + r.height/2, 74);
   }
-  boat.addEventListener('click', sail);
-  boat.addEventListener('keydown', e=>{
-    if(e.key==='Enter'||e.key===' '){e.preventDefault();sail();}
+  signatureMark.addEventListener('click', tapMark);
+  signatureMark.addEventListener('keydown', e=>{
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();tapMark();}
   });
 </script>
 </body>
